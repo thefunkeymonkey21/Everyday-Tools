@@ -109,9 +109,16 @@
     const overlaySub = document.getElementById('overlay-sub');
     const startBtn = document.getElementById('start-btn');
 
+    function getStorage(key, fallback = '0') {
+      try { return localStorage.getItem(key) || fallback; } catch (e) { return fallback; }
+    }
+    function setStorage(key, val) {
+      try { localStorage.setItem(key, val); } catch (e) {}
+    }
+
     let isPlaying = false;
     let score = 0;
-    let bestScore = parseInt(localStorage.getItem('vault_flappy_best') || '0', 10);
+    let bestScore = parseInt(getStorage('vault_flappy_best', '0'), 10);
     bestEl.textContent = bestScore;
 
     const bird = {
@@ -219,7 +226,7 @@
           if (score > bestScore) {
             bestScore = score;
             bestEl.textContent = bestScore;
-            localStorage.setItem('vault_flappy_best', bestScore);
+            setStorage('vault_flappy_best', bestScore);
           }
         }
 

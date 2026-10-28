@@ -9,6 +9,24 @@ import {
   Keyboard
 } from 'lucide-react';
 
+function resolveGameUrl(src) {
+  if (!src) return '';
+  if (src.startsWith('http://') || src.startsWith('https://')) return src;
+
+  const cleanPath = src.replace(/^\.\//, '').replace(/^\//, '');
+
+  let basePath = window.location.pathname;
+  if (!basePath.endsWith('/')) {
+    if (/\.[a-zA-Z0-9]+$/.test(basePath)) {
+      basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+    } else {
+      basePath = basePath + '/';
+    }
+  }
+
+  return window.location.origin + basePath + cleanPath;
+}
+
 export const GamePlayerModal = ({
   game,
   onClose,
@@ -22,6 +40,8 @@ export const GamePlayerModal = ({
   const containerRef = useRef(null);
   const iframeRef = useRef(null);
 
+  const resolvedUrl = game ? resolveGameUrl(game.iframeSrc) : '';
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && !document.fullscreenElement) {
@@ -31,6 +51,14 @@ export const GamePlayerModal = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
+
+  useEffect(() => {
+    if (iframeRef.current) {
+      try {
+        iframeRef.current.focus();
+      } catch (e) {}
+    }
+  }, [resolvedUrl, iframeKey]);
 
   if (!game) return null;
 
@@ -140,11 +168,16 @@ export const GamePlayerModal = ({
           <iframe
             key={iframeKey}
             ref={iframeRef}
-            src={game.iframeSrc}
+            src={resolvedUrl}
             title={game.title}
             className="w-full h-full border-0 bg-transparent"
             allow="autoplay; fullscreen; gamepad; focus-without-user-activation; pointer-lock"
-            sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
+            sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-popups"
+            onLoad={() => {
+              if (iframeRef.current) {
+                try { iframeRef.current.focus(); } catch (e) {}
+              }
+            }}
           />
 
           {/* Controls Overlay Drawer */}
@@ -187,13 +220,13 @@ export const GamePlayerModal = ({
           <div className="flex items-center gap-3">
             <span className="text-slate-500">Source:</span>
             <code className="text-[11px] font-mono text-cyan-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-              {game.iframeSrc}
+              {resolvedUrl}
             </code>
           </div>
 
           <div className="flex items-center gap-3">
             <a
-              href={game.iframeSrc}
+              href={resolvedUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors"

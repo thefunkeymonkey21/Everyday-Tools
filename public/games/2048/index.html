@@ -187,10 +187,17 @@
     const restartBtn = document.getElementById('restart-btn');
     const undoBtn = document.getElementById('undo-btn');
 
+    function getStorage(key, fallback = '0') {
+      try { return localStorage.getItem(key) || fallback; } catch (e) { return fallback; }
+    }
+    function setStorage(key, val) {
+      try { localStorage.setItem(key, val); } catch (e) {}
+    }
+
     let board = Array.from({ length: 4 }, () => Array(4).fill(0));
     let previousState = null;
     let score = 0;
-    let bestScore = parseInt(localStorage.getItem('vault_2048_best') || '0', 10);
+    let bestScore = parseInt(getStorage('vault_2048_best', '0'), 10);
     bestEl.textContent = bestScore;
     let won = false;
 
@@ -231,7 +238,7 @@
       if (score > bestScore) {
         bestScore = score;
         bestEl.textContent = bestScore;
-        localStorage.setItem('vault_2048_best', bestScore);
+        setStorage('vault_2048_best', bestScore);
       }
     }
 

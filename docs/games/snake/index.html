@@ -152,12 +152,19 @@
     const COLS = canvas.width / GRID;
     const ROWS = canvas.height / GRID;
 
+    function getStorage(key, fallback = '0') {
+      try { return localStorage.getItem(key) || fallback; } catch (e) { return fallback; }
+    }
+    function setStorage(key, val) {
+      try { localStorage.setItem(key, val); } catch (e) {}
+    }
+
     let snake = [];
     let dir = { x: 1, y: 0 };
     let nextDir = { x: 1, y: 0 };
     let food = { x: 10, y: 10 };
     let score = 0;
-    let bestScore = parseInt(localStorage.getItem('vault_snake_best') || '0', 10);
+    let bestScore = parseInt(getStorage('vault_snake_best', '0'), 10);
     let gameLoop = null;
     let isPlaying = false;
     let baseSpeed = 110;
@@ -220,7 +227,7 @@
         if (score > bestScore) {
           bestScore = score;
           bestEl.textContent = bestScore;
-          localStorage.setItem('vault_snake_best', bestScore);
+          setStorage('vault_snake_best', bestScore);
         }
         spawnFood();
         updateSpeedDisplay();

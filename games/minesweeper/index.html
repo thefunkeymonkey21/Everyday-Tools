@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minesweeper</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #070B12;
+      color: #E2E8F0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      padding: 10px;
+    }
+    .game-box {
+      background: #0B111E;
+      border: 2px solid #1E293B;
+      border-radius: 8px;
+      padding: 14px;
+      box-shadow: 0 0 24px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: #050811;
+      border: 1px solid #1E293B;
+      border-radius: 6px;
+      padding: 8px 16px;
+    }
+    .digital-lcd {
+      background: #000;
+      color: #EF4444;
+      font-family: monospace;
+      font-size: 22px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid #334155;
+      letter-spacing: 2px;
+      min-width: 60px;
+      text-align: center;
+    }
+    .face-btn {
+      font-size: 22px;
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .face-btn:hover { background: #334155; }
+    .grid {
+      display: grid;
+      grid-gap: 2px;
+      background: #1E293B;
+      border: 2px solid #1E293B;
+      border-radius: 4px;
+    }
+    .cell {
+      width: 30px;
+      height: 30px;
+      background: #1E293B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.08s;
+    }
+    .cell:hover:not(.revealed) {
+      background: #334155;
+    }
+    .cell.revealed {
+      background: #0B111E;
+      cursor: default;
+    }
+    .cell.mine {
+      background: #EF4444 !important;
+    }
+    .cell.flagged {
+      color: #F59E0B;
+    }
+    .c1 { color: #38BDF8; }
+    .c2 { color: #10B981; }
+    .c3 { color: #EF4444; }
+    .c4 { color: #8B5CF6; }
+    .c5 { color: #F97316; }
+    .c6 { color: #06B6D4; }
+    .c7 { color: #E2E8F0; }
+    .c8 { color: #94A3B8; }
+
+    .tool-row {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .diff-select {
+      background: #1E293B;
+      color: #E2E8F0;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+      outline: none;
+    }
+    .flag-toggle {
+      background: #1E293B;
+      color: #E2E8F0;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .flag-toggle.active {
+      background: #F59E0B;
+      color: #451A03;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-box">
+    <div class="tool-row">
+      <select id="diff" class="diff-select" onchange="changeDifficulty(this.value)">
+        <option value="easy">Easy (9x9 · 10 Mines)</option>
+        <option value="medium">Medium (12x12 · 22 Mines)</option>
+      </select>
+      <button id="flag-btn" class="flag-toggle" onclick="toggleFlagMode()">
+        🚩 Flag Mode
+      </button>
+    </div>
+
+    <div class="top-bar">
+      <div id="mines-left" class="digital-lcd">010</div>
+      <button id="face" class="face-btn" onclick="initGame()">🙂</button>
+      <div id="timer" class="digital-lcd">000</div>
+    </div>
+
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <script>
+    let ROWS = 9;
+    let COLS = 9;
+    let MINES = 10;
+
+    let board = [];
+    let revealed = [];
+    let flagged = [];
+    let isGameOver = false;
+    let firstClick = true;
+    let flagMode = false;
+    let timer = 0;
+    let timerId = null;
+
+    const gridEl = document.getElementById('grid');
+    const minesLeftEl = document.getElementById('mines-left');
+    const timerEl = document.getElementById('timer');
+    const faceEl = document.getElementById('face');
+    const flagBtn = document.getElementById('flag-btn');
+
+    function changeDifficulty(val) {
+      if (val === 'easy') {
+        ROWS = 9; COLS = 9; MINES = 10;
+      } else {
+        ROWS = 12; COLS = 12; MINES = 22;
+      }
+      initGame();
+    }
+
+    function toggleFlagMode() {
+      flagMode = !flagMode;
+      flagBtn.classList.toggle('active', flagMode);
+    }
+
+    function initGame() {
+      clearInterval(timerId);
+      timer = 0;
+      timerEl.textContent = '000';
+      timerId = null;
+      isGameOver = false;
+      firstClick = true;
+      faceEl.textContent = '🙂';
+
+      board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+      revealed = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+      flagged = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+
+      minesLeftEl.textContent = String(MINES).padStart(3, '0');
+      buildDOM();
+    }
+
+    function placeMines(startR, startC) {
+      let placed = 0;
+      while (placed < MINES) {
+        const r = Math.floor(Math.random() * ROWS);
+        const c = Math.floor(Math.random() * COLS);
+        // Do not place on starting cell or existing mine
+        if ((Math.abs(r - startR) <= 1 && Math.abs(c - startC) <= 1) || board[r][c] === -1) {
+          continue;
+        }
+        board[r][c] = -1;
+        placed++;
+      }
+
+      // Compute neighbor counts
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (board[r][c] === -1) continue;
+          let count = 0;
+          for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+              const nr = r + dr;
+              const nc = c + dc;
+              if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && board[nr][nc] === -1) {
+                count++;
+              }
+            }
+          }
+          board[r][c] = count;
+        }
+      }
+    }
+
+    function buildDOM() {
+      gridEl.innerHTML = '';
+      gridEl.style.gridTemplateColumns = `repeat(${COLS}, 30px)`;
+
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          cell.dataset.r = r;
+          cell.dataset.c = c;
+
+          cell.addEventListener('click', () => handleClick(r, c));
+          cell.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            handleRightClick(r, c);
+          });
+
+          gridEl.appendChild(cell);
+        }
+      }
+    }
+
+    function handleClick(r, c) {
+      if (isGameOver || revealed[r][c]) return;
+
+      if (flagMode) {
+        handleRightClick(r, c);
+        return;
+      }
+
+      if (flagged[r][c]) return;
+
+      if (firstClick) {
+        firstClick = false;
+        placeMines(r, c);
+        timerId = setInterval(() => {
+          timer = Math.min(999, timer + 1);
+          timerEl.textContent = String(timer).padStart(3, '0');
+        }, 1000);
+      }
+
+      if (board[r][c] === -1) {
+        // Hit a mine!
+        revealAllMines();
+        revealed[r][c] = true;
+        isGameOver = true;
+        faceEl.textContent = '😵';
+        clearInterval(timerId);
+        updateDOM();
+        return;
+      }
+
+      revealCell(r, c);
+      checkWin();
+      updateDOM();
+    }
+
+    function handleRightClick(r, c) {
+      if (isGameOver || revealed[r][c]) return;
+      flagged[r][c] = !flagged[r][c];
+      const flagsCount = flagged.flat().filter(Boolean).length;
+      minesLeftEl.textContent = String(Math.max(0, MINES - flagsCount)).padStart(3, '0');
+      updateDOM();
+    }
+
+    function revealCell(r, c) {
+      if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return;
+      if (revealed[r][c] || flagged[r][c]) return;
+
+      revealed[r][c] = true;
+
+      // Flood fill empty neighbors
+      if (board[r][c] === 0) {
+        for (let dr = -1; dr <= 1; dr++) {
+          for (let dc = -1; dc <= 1; dc++) {
+            revealCell(r + dr, c + dc);
+          }
+        }
+      }
+    }
+
+    function revealAllMines() {
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (board[r][c] === -1) revealed[r][c] = true;
+        }
+      }
+    }
+
+    function checkWin() {
+      let unrevealedSafe = 0;
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (board[r][c] !== -1 && !revealed[r][c]) unrevealedSafe++;
+        }
+      }
+      if (unrevealedSafe === 0) {
+        isGameOver = true;
+        faceEl.textContent = '😎';
+        clearInterval(timerId);
+      }
+    }
+
+    function updateDOM() {
+      const cells = gridEl.children;
+      for (let i = 0; i < cells.length; i++) {
+        const r = parseInt(cells[i].dataset.r, 10);
+        const c = parseInt(cells[i].dataset.c, 10);
+        const cell = cells[i];
+
+        if (revealed[r][c]) {
+          cell.className = 'cell revealed';
+          if (board[r][c] === -1) {
+            cell.className += ' mine';
+            cell.textContent = '💣';
+          } else if (board[r][c] > 0) {
+            cell.textContent = board[r][c];
+            cell.className += ' c' + board[r][c];
+          } else {
+            cell.textContent = '';
+          }
+        } else if (flagged[r][c]) {
+          cell.className = 'cell flagged';
+          cell.textContent = '🚩';
+        } else {
+          cell.className = 'cell';
+          cell.textContent = '';
+        }
+      }
+    }
+
+    initGame();
+  </script>
+</body>
+</html>

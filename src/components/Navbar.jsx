@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Plus, Star, Gamepad2, Search } from 'lucide-react';
+import { Shield, Star, Gamepad2, Search } from 'lucide-react';
 
 export const Navbar = ({
   onAddGameClick,
@@ -27,7 +27,7 @@ export const Navbar = ({
           </span>
         </button>
 
-        {/* Zone 2: 4-5 Nav Links */}
+        {/* Zone 2: Nav Links */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
           <button
             onClick={onAllGamesClick}
@@ -42,21 +42,6 @@ export const Navbar = ({
             <Star className="w-3.5 h-3.5 text-amber-400" />
             Favorites ({favoritesCount})
           </button>
-          <button
-            onClick={onAddGameClick}
-            className="hover:text-white transition-colors whitespace-nowrap shrink-0 flex items-center gap-1.5"
-          >
-            <Plus className="w-3.5 h-3.5 text-emerald-400" />
-            Add Iframe Game
-          </button>
-          <a
-            href="/games.json"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-white transition-colors whitespace-nowrap shrink-0 text-slate-500"
-          >
-            games.json
-          </a>
         </nav>
 
         {/* Search Input inline */}

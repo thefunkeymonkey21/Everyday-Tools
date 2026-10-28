@@ -12,8 +12,7 @@ import {
   Search,
   ArrowUpDown,
   History,
-  Gamepad2,
-  ExternalLink
+  Gamepad2
 } from 'lucide-react';
 
 export default function App() {
@@ -161,9 +160,7 @@ export default function App() {
               <div className="lg:col-span-7 p-6 sm:p-8 md:p-10 flex flex-col justify-between z-10">
                 <div>
                   <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-3">
-                    <span className="text-emerald-400 tracking-wide uppercase">Featured Iframe Game</span>
-                    <span aria-hidden="true" className="text-slate-600">·</span>
-                    <span className="text-slate-300">{featuredGame.category}</span>
+                    <span className="text-emerald-400">{featuredGame.category}</span>
                     <span aria-hidden="true" className="text-slate-600">·</span>
                     <span className="font-mono tabular-nums text-slate-400">
                       {featuredGame.plays?.toLocaleString?.() || featuredGame.plays} plays
@@ -186,7 +183,7 @@ export default function App() {
                       className="px-6 py-3 bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-sm rounded-xl flex items-center gap-2.5 shadow-lg shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95"
                     >
                       <Play className="w-4 h-4 fill-current" />
-                      <span>Play Now in Iframe</span>
+                      <span>Play Now</span>
                     </button>
 
                     <button
@@ -202,16 +199,6 @@ export default function App() {
                       />
                       <span>Favorite</span>
                     </button>
-
-                    <a
-                      href={featuredGame.iframeSrc}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-3 text-slate-400 hover:text-slate-200 text-sm font-medium flex items-center gap-1.5 transition-colors"
-                    >
-                      <span>Direct URL</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
                   </div>
 
                   <div className="flex items-center gap-3 text-xs text-slate-400">

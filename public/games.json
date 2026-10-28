@@ -1,0 +1,140 @@
+[
+  {
+    "id": "snake",
+    "title": "Cyber Snake",
+    "category": "Arcade",
+    "description": "Navigate the neon grid, hunt energy orbs, and grow your cyber serpent while avoiding perimeter laser walls and your own tail.",
+    "iframeSrc": "/games/snake/index.html",
+    "thumbnail": "/src/assets/images/game_snake_thumb_1793151830658.jpg",
+    "controls": [
+      { "key": "Arrow Keys / WASD", "action": "Steer Serpent" },
+      { "key": "Space", "action": "Start / Restart Game" }
+    ],
+    "rating": 4.9,
+    "plays": 24810,
+    "releaseYear": 2026,
+    "badge": "Popular",
+    "tags": ["Neon", "Retro", "Quick Play", "Endless"]
+  },
+  {
+    "id": "tetris",
+    "title": "Cyber Blocks",
+    "category": "Puzzle",
+    "description": "High-octane block-dropping strategy. Rotate and slot falling tetrominoes, clear quadruple lines, and utilize hold storage to climb levels.",
+    "iframeSrc": "/games/tetris/index.html",
+    "thumbnail": "/src/assets/images/game_tetris_thumb_1793151832187.jpg",
+    "controls": [
+      { "key": "← / →", "action": "Shift Block Left / Right" },
+      { "key": "↑ / W", "action": "Rotate Piece" },
+      { "key": "↓ / S", "action": "Soft Drop" },
+      { "key": "Space", "action": "Hard Drop (Instant)" },
+      { "key": "C", "action": "Hold Piece in Reserve" }
+    ],
+    "rating": 4.9,
+    "plays": 38450,
+    "releaseYear": 2026,
+    "badge": "Featured",
+    "tags": ["Tetrominoes", "Brain", "Classics", "Skill"]
+  },
+  {
+    "id": "flappy",
+    "title": "Flappy Wings",
+    "category": "Arcade",
+    "description": "A test of timing and rhythm. Tap to flap, glide through narrow industrial pipes, and beat high score milestones.",
+    "iframeSrc": "/games/flappy/index.html",
+    "thumbnail": "/src/assets/images/game_flappy_thumb_1793151831578.jpg",
+    "controls": [
+      { "key": "Space / Left Click", "action": "Flap Wings" }
+    ],
+    "rating": 4.7,
+    "plays": 19200,
+    "releaseYear": 2026,
+    "badge": "Arcade",
+    "tags": ["Casual", "One Button", "Challenging"]
+  },
+  {
+    "id": "2048",
+    "title": "2048 Puzzle",
+    "category": "Puzzle",
+    "description": "Slide numbered tiles across a 4x4 board. Combine identical numbers to merge them into larger values until you create the legendary 2048 tile.",
+    "iframeSrc": "/games/2048/index.html",
+    "thumbnail": "/src/assets/images/game_2048_thumb_1793151832553.jpg",
+    "controls": [
+      { "key": "Arrow Keys / WASD", "action": "Slide Tiles" },
+      { "key": "Touch Swipe", "action": "Mobile Slide" }
+    ],
+    "rating": 4.8,
+    "plays": 31500,
+    "releaseYear": 2026,
+    "badge": "Top Rated",
+    "tags": ["Math", "Strategy", "Calm", "Undo Support"]
+  },
+  {
+    "id": "space-invaders",
+    "title": "Galactic Invaders",
+    "category": "Action",
+    "description": "Defend humanity's frontier against relentless waves of descending alien dreadnoughts. Dodge enemy laser fire and launch counter-strikes.",
+    "iframeSrc": "/games/space-invaders/index.html",
+    "thumbnail": "/src/assets/images/game_space_invaders_thumb_1793151831873.jpg",
+    "controls": [
+      { "key": "← / → or A / D", "action": "Move Spaceship" },
+      { "key": "Space", "action": "Fire Plasma Blaster" }
+    ],
+    "rating": 4.8,
+    "plays": 22100,
+    "releaseYear": 2026,
+    "badge": "Retro",
+    "tags": ["Space", "Shooter", "8-Bit", "Waves"]
+  },
+  {
+    "id": "breakout",
+    "title": "Neon Breakout",
+    "category": "Arcade",
+    "description": "Smash your way through vibrant multi-layered brick formations using an agile photon ball and high-reflection deflection paddle.",
+    "iframeSrc": "/games/breakout/index.html",
+    "thumbnail": "",
+    "controls": [
+      { "key": "Mouse / Arrow Keys", "action": "Move Paddle" },
+      { "key": "Click / Space", "action": "Launch Ball" }
+    ],
+    "rating": 4.7,
+    "plays": 16750,
+    "releaseYear": 2026,
+    "badge": "Action",
+    "tags": ["Brick Breaker", "Physics", "Reflexes"]
+  },
+  {
+    "id": "pong",
+    "title": "Retro Pong Arena",
+    "category": "Retro",
+    "description": "The quintessential table tennis duel. Battle an adaptive AI CPU across multiple rallies or share the keyboard for a 2-player showdown.",
+    "iframeSrc": "/games/pong/index.html",
+    "thumbnail": "",
+    "controls": [
+      { "key": "W / S or Mouse", "action": "Player 1 Paddle" },
+      { "key": "↑ / ↓ (2P Mode)", "action": "Player 2 Paddle" }
+    ],
+    "rating": 4.6,
+    "plays": 12890,
+    "releaseYear": 2026,
+    "badge": "2-Player",
+    "tags": ["Versus AI", "Local Multiplayer", "Arcade"]
+  },
+  {
+    "id": "minesweeper",
+    "title": "Minesweeper Tactical",
+    "category": "Puzzle",
+    "description": "Clear the minefield using pure deductive logic. Uncover safe sectors, tag dangerous ordnance with warning flags, and beat the clock.",
+    "iframeSrc": "/games/minesweeper/index.html",
+    "thumbnail": "",
+    "controls": [
+      { "key": "Left Click", "action": "Uncover Sector" },
+      { "key": "Right Click / Flag Mode", "action": "Plant Flag 🚩" }
+    ],
+    "rating": 4.8,
+    "plays": 28400,
+    "releaseYear": 2026,
+    "badge": "Classic",
+    "tags": ["Minesweeper", "Logic", "Timer", "Custom Difficulty"]
+  }
+]

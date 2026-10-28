@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retro Pong</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #070B12;
+      color: #E2E8F0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    .hud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 480px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: monospace;
+    }
+    .score-big {
+      font-size: 26px;
+      color: #F8FAFC;
+    }
+    #game-container {
+      position: relative;
+      border: 2px solid #1E293B;
+      border-radius: 8px;
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.05);
+      background: #0B111E;
+    }
+    canvas { display: block; border-radius: 6px; }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(7, 11, 18, 0.9);
+      backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border-radius: 6px;
+    }
+    .overlay.hidden { display: none; }
+    .title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #F8FAFC;
+      letter-spacing: 2px;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #94A3B8;
+      text-align: center;
+    }
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+    button.btn {
+      padding: 8px 18px;
+      background: #F8FAFC;
+      color: #0F172A;
+      font-weight: 700;
+      font-size: 13px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    button.btn:hover {
+      background: #CBD5E1;
+      transform: translateY(-1px);
+    }
+    .mode-select {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .mode-btn {
+      padding: 6px 12px;
+      background: #1E293B;
+      color: #94A3B8;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .mode-btn.active {
+      background: #3B82F6;
+      color: #FFF;
+      border-color: #3B82F6;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>PLAYER: <span id="p1-score" class="score-big">0</span></div>
+    <div style="color: #64748B;">FIRST TO 7 WINS</div>
+    <div>CPU: <span id="p2-score" class="score-big">0</span></div>
+  </div>
+
+  <div id="game-container">
+    <canvas id="canvas" width="480" height="340"></canvas>
+    <div id="overlay" class="overlay">
+      <div id="overlay-title" class="title">RETRO PONG</div>
+      <div id="overlay-sub" class="subtitle">Use W / S or Up / Down arrows to move paddle</div>
+      
+      <div class="mode-select">
+        <button class="mode-btn active" id="mode-ai" onclick="setMode('ai')">VS CPU</button>
+        <button class="mode-btn" id="mode-2p" onclick="setMode('2p')">2 PLAYERS (W/S & ↑/↓)</button>
+      </div>
+
+      <button id="start-btn" class="btn" style="margin-top: 8px;">SERVE BALL</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const p1ScoreEl = document.getElementById('p1-score');
+    const p2ScoreEl = document.getElementById('p2-score');
+    const overlay = document.getElementById('overlay');
+    const overlayTitle = document.getElementById('overlay-title');
+    const overlaySub = document.getElementById('overlay-sub');
+    const startBtn = document.getElementById('start-btn');
+    const modeAiBtn = document.getElementById('mode-ai');
+    const mode2pBtn = document.getElementById('mode-2p');
+
+    let isPlaying = false;
+    let gameMode = 'ai'; // 'ai' or '2p'
+    let p1Score = 0;
+    let p2Score = 0;
+    let animId = null;
+
+    const paddleHeight = 60;
+    const paddleWidth = 8;
+
+    const p1 = {
+      x: 14,
+      y: (canvas.height - paddleHeight) / 2,
+      dy: 0,
+      speed: 6
+    };
+
+    const p2 = {
+      x: canvas.width - 14 - paddleWidth,
+      y: (canvas.height - paddleHeight) / 2,
+      dy: 0,
+      speed: 4.8
+    };
+
+    const ball = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      size: 8,
+      dx: 4,
+      dy: 2,
+      speed: 5
+    };
+
+    function setMode(mode) {
+      gameMode = mode;
+      modeAiBtn.classList.toggle('active', mode === 'ai');
+      mode2pBtn.classList.toggle('active', mode === '2p');
+      overlaySub.textContent = mode === 'ai' 
+        ? 'Use W / S or Up / Down arrows to move paddle' 
+        : 'P1: W/S · P2: Up/Down arrows';
+    }
+
+    function resetBall(direction = 1) {
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      const angle = (Math.random() - 0.5) * Math.PI / 3;
+      ball.speed = 5;
+      ball.dx = direction * ball.speed * Math.cos(angle);
+      ball.dy = ball.speed * Math.sin(angle);
+    }
+
+    function startGame() {
+      p1Score = 0;
+      p2Score = 0;
+      p1ScoreEl.textContent = p1Score;
+      p2ScoreEl.textContent = p2Score;
+      p1.y = (canvas.height - paddleHeight) / 2;
+      p2.y = (canvas.height - paddleHeight) / 2;
+      resetBall(Math.random() > 0.5 ? 1 : -1);
+      isPlaying = true;
+      overlay.classList.add('hidden');
+      if (animId) cancelAnimationFrame(animId);
+      loop();
+    }
+
+    function checkVictory() {
+      if (p1Score >= 7 || p2Score >= 7) {
+        isPlaying = false;
+        const winner = p1Score >= 7 ? 'PLAYER 1' : (gameMode === 'ai' ? 'CPU' : 'PLAYER 2');
+        overlayTitle.textContent = winner + ' WINS!';
+        overlaySub.textContent = 'Score: ' + p1Score + ' - ' + p2Score;
+        startBtn.textContent = 'PLAY AGAIN';
+        overlay.classList.remove('hidden');
+        return true;
+      }
+      return false;
+    }
+
+    function loop() {
+      if (!isPlaying) return;
+
+      // Update P1
+      p1.y += p1.dy;
+      p1.y = Math.max(6, Math.min(canvas.height - paddleHeight - 6, p1.y));
+
+      // Update P2
+      if (gameMode === 'ai') {
+        const p2Center = p2.y + paddleHeight / 2;
+        if (p2Center < ball.y - 12) {
+          p2.y += p2.speed;
+        } else if (p2Center > ball.y + 12) {
+          p2.y -= p2.speed;
+        }
+      } else {
+        p2.y += p2.dy;
+      }
+      p2.y = Math.max(6, Math.min(canvas.height - paddleHeight - 6, p2.y));
+
+      // Update Ball
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+
+      // Top & Bottom walls
+      if (ball.y <= 0 || ball.y + ball.size >= canvas.height) {
+        ball.dy = -ball.dy;
+      }
+
+      // Left paddle collision
+      if (
+        ball.x <= p1.x + paddleWidth &&
+        ball.x + ball.size >= p1.x &&
+        ball.y + ball.size >= p1.y &&
+        ball.y <= p1.y + paddleHeight
+      ) {
+        const offset = (ball.y + ball.size / 2 - (p1.y + paddleHeight / 2)) / (paddleHeight / 2);
+        ball.speed = Math.min(10, ball.speed + 0.3);
+        const angle = offset * (Math.PI / 3);
+        ball.dx = ball.speed * Math.cos(angle);
+        ball.dy = ball.speed * Math.sin(angle);
+      }
+
+      // Right paddle collision
+      if (
+        ball.x + ball.size >= p2.x &&
+        ball.x <= p2.x + paddleWidth &&
+        ball.y + ball.size >= p2.y &&
+        ball.y <= p2.y + paddleHeight
+      ) {
+        const offset = (ball.y + ball.size / 2 - (p2.y + paddleHeight / 2)) / (paddleHeight / 2);
+        ball.speed = Math.min(10, ball.speed + 0.3);
+        const angle = offset * (Math.PI / 3);
+        ball.dx = -ball.speed * Math.cos(angle);
+        ball.dy = ball.speed * Math.sin(angle);
+      }
+
+      // Score points
+      if (ball.x < 0) {
+        p2Score++;
+        p2ScoreEl.textContent = p2Score;
+        if (!checkVictory()) resetBall(1);
+      } else if (ball.x > canvas.width) {
+        p1Score++;
+        p1ScoreEl.textContent = p1Score;
+        if (!checkVictory()) resetBall(-1);
+      }
+
+      draw();
+      animId = requestAnimationFrame(loop);
+    }
+
+    function draw() {
+      ctx.fillStyle = '#0B111E';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Center dashed net
+      ctx.strokeStyle = '#1E293B';
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2, 0);
+      ctx.lineTo(canvas.width / 2, canvas.height);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // P1 Paddle
+      ctx.fillStyle = '#38BDF8';
+      ctx.fillRect(p1.x, p1.y, paddleWidth, paddleHeight);
+
+      // P2 Paddle
+      ctx.fillStyle = '#F43F5E';
+      ctx.fillRect(p2.x, p2.y, paddleWidth, paddleHeight);
+
+      // Ball
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(ball.x, ball.y, ball.size, ball.size);
+    }
+
+    // Controls
+    window.addEventListener('keydown', (e) => {
+      if (['w', 'W'].includes(e.key)) p1.dy = -p1.speed;
+      if (['s', 'S'].includes(e.key)) p1.dy = p1.speed;
+
+      if (gameMode === 'ai') {
+        if (e.key === 'ArrowUp') p1.dy = -p1.speed;
+        if (e.key === 'ArrowDown') p1.dy = p1.speed;
+      } else {
+        if (e.key === 'ArrowUp') p2.dy = -p2.speed;
+        if (e.key === 'ArrowDown') p2.dy = p2.speed;
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (['w', 'W', 's', 'S'].includes(e.key)) p1.dy = 0;
+      if (gameMode === 'ai') {
+        if (['ArrowUp', 'ArrowDown'].includes(e.key)) p1.dy = 0;
+      } else {
+        if (['ArrowUp', 'ArrowDown'].includes(e.key)) p2.dy = 0;
+      }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseY = e.clientY - rect.top;
+      p1.y = Math.max(6, Math.min(canvas.height - paddleHeight - 6, mouseY - paddleHeight / 2));
+    });
+
+    startBtn.addEventListener('click', startGame);
+    draw();
+  </script>
+</body>
+</html>

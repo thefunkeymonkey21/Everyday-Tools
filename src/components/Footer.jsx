@@ -35,7 +35,7 @@ export const Footer = ({ totalGames, onOpenAddModal }) => {
             <ul className="space-y-2 text-xs">
               <li>
                 <a
-                  href="/games.json"
+                  href="./games.json"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-emerald-400 transition-colors"
@@ -53,7 +53,7 @@ export const Footer = ({ totalGames, onOpenAddModal }) => {
               </li>
               <li>
                 <a
-                  href="/games/tetris/index.html"
+                  href="./games/tetris/index.html"
                   target="_blank"
                   className="hover:text-emerald-400 transition-colors"
                 >
@@ -62,7 +62,7 @@ export const Footer = ({ totalGames, onOpenAddModal }) => {
               </li>
               <li>
                 <a
-                  href="/games/snake/index.html"
+                  href="./games/snake/index.html"
                   target="_blank"
                   className="hover:text-emerald-400 transition-colors"
                 >

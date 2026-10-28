@@ -4,8 +4,8 @@
     "title": "Cyber Snake",
     "category": "Arcade",
     "description": "Navigate the neon grid, hunt energy orbs, and grow your cyber serpent while avoiding perimeter laser walls and your own tail.",
-    "iframeSrc": "/games/snake/index.html",
-    "thumbnail": "/src/assets/images/game_snake_thumb_1793151830658.jpg",
+    "iframeSrc": "./games/snake/index.html",
+    "thumbnail": "./images/game_snake_thumb.jpg",
     "controls": [
       { "key": "Arrow Keys / WASD", "action": "Steer Serpent" },
       { "key": "Space", "action": "Start / Restart Game" }
@@ -21,8 +21,8 @@
     "title": "Cyber Blocks",
     "category": "Puzzle",
     "description": "High-octane block-dropping strategy. Rotate and slot falling tetrominoes, clear quadruple lines, and utilize hold storage to climb levels.",
-    "iframeSrc": "/games/tetris/index.html",
-    "thumbnail": "/src/assets/images/game_tetris_thumb_1793151832187.jpg",
+    "iframeSrc": "./games/tetris/index.html",
+    "thumbnail": "./images/game_tetris_thumb.jpg",
     "controls": [
       { "key": "← / →", "action": "Shift Block Left / Right" },
       { "key": "↑ / W", "action": "Rotate Piece" },
@@ -41,8 +41,8 @@
     "title": "Flappy Wings",
     "category": "Arcade",
     "description": "A test of timing and rhythm. Tap to flap, glide through narrow industrial pipes, and beat high score milestones.",
-    "iframeSrc": "/games/flappy/index.html",
-    "thumbnail": "/src/assets/images/game_flappy_thumb_1793151831578.jpg",
+    "iframeSrc": "./games/flappy/index.html",
+    "thumbnail": "./images/game_flappy_thumb.jpg",
     "controls": [
       { "key": "Space / Left Click", "action": "Flap Wings" }
     ],
@@ -57,8 +57,8 @@
     "title": "2048 Puzzle",
     "category": "Puzzle",
     "description": "Slide numbered tiles across a 4x4 board. Combine identical numbers to merge them into larger values until you create the legendary 2048 tile.",
-    "iframeSrc": "/games/2048/index.html",
-    "thumbnail": "/src/assets/images/game_2048_thumb_1793151832553.jpg",
+    "iframeSrc": "./games/2048/index.html",
+    "thumbnail": "./images/game_2048_thumb.jpg",
     "controls": [
       { "key": "Arrow Keys / WASD", "action": "Slide Tiles" },
       { "key": "Touch Swipe", "action": "Mobile Slide" }
@@ -74,8 +74,8 @@
     "title": "Galactic Invaders",
     "category": "Action",
     "description": "Defend humanity's frontier against relentless waves of descending alien dreadnoughts. Dodge enemy laser fire and launch counter-strikes.",
-    "iframeSrc": "/games/space-invaders/index.html",
-    "thumbnail": "/src/assets/images/game_space_invaders_thumb_1793151831873.jpg",
+    "iframeSrc": "./games/space-invaders/index.html",
+    "thumbnail": "./images/game_space_invaders_thumb.jpg",
     "controls": [
       { "key": "← / → or A / D", "action": "Move Spaceship" },
       { "key": "Space", "action": "Fire Plasma Blaster" }
@@ -91,7 +91,7 @@
     "title": "Neon Breakout",
     "category": "Arcade",
     "description": "Smash your way through vibrant multi-layered brick formations using an agile photon ball and high-reflection deflection paddle.",
-    "iframeSrc": "/games/breakout/index.html",
+    "iframeSrc": "./games/breakout/index.html",
     "thumbnail": "",
     "controls": [
       { "key": "Mouse / Arrow Keys", "action": "Move Paddle" },
@@ -108,7 +108,7 @@
     "title": "Retro Pong Arena",
     "category": "Retro",
     "description": "The quintessential table tennis duel. Battle an adaptive AI CPU across multiple rallies or share the keyboard for a 2-player showdown.",
-    "iframeSrc": "/games/pong/index.html",
+    "iframeSrc": "./games/pong/index.html",
     "thumbnail": "",
     "controls": [
       { "key": "W / S or Mouse", "action": "Player 1 Paddle" },
@@ -125,7 +125,7 @@
     "title": "Minesweeper Tactical",
     "category": "Puzzle",
     "description": "Clear the minefield using pure deductive logic. Uncover safe sectors, tag dangerous ordnance with warning flags, and beat the clock.",
-    "iframeSrc": "/games/minesweeper/index.html",
+    "iframeSrc": "./games/minesweeper/index.html",
     "thumbnail": "",
     "controls": [
       { "key": "Left Click", "action": "Uncover Sector" },
